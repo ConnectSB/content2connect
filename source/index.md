@@ -1,168 +1,91 @@
 ---
-title: API Reference
+title: Content2Connect API
 
 language_tabs:
   - shell
-  - ruby
-  - python
-
-toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a>
 
 includes:
-  - errors
 
-search: true
+search: false
 ---
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
-
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
-
-This example API documentation page was created with [Slate](http://github.com/tripit/slate). Feel free to edit it and use it as a base for your own API's documentation.
+Welcome to ConnectSB's Content2Connect API. This is still a work in progress.
 
 # Authentication
 
-> To authorize, use this code:
+Content2Connect uses OAuth2 for authenticating and authorizing users. 
 
-```ruby
-require 'kittn'
+Content2Connect excepts for the access token be included in all API requests, this is a GET parameter which looks like this:
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
+`?access_token=CONTENT2CONNECTACCESSTOKEN`
 
-```python
-import 'kittn'
-
-api = Kittn.authorize('meowmeowmeow')
-```
-
-```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
-```
-
-> Make sure to replace `meowmeowmeow` with your API key.
-
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
-
-<aside class="notice">
-You must replace `meowmeowmeow` with your personal API key.
-</aside>
-
-# Kittens
-
-## Get All Kittens
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
-
-```python
-import 'kittn'
-
-api = Kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
-
-```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
-```
-
-> The above command returns JSON structured like this:
-
-```json
-[
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Isis",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
-]
-```
-
-This endpoint retrieves all kittens.
+## Request authorization code
 
 ### HTTP Request
+`GET http://csbauth2.apps2connect.nl/oauth/v2/auth`
 
-`GET http://example.com/kittens`
-
-### Query Parameters
-
-Parameter | Default | Description
+### Query parameters
+Parameter | Description
 --------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
+client_id | String which was sent by us when applying for a client.
+redirect_uri | URI to redirect to with the response, this should be set to one of the URI's you provided when applying for a client.
+scope | Space seperated list of the scopes to request an authorization code for.
+response_type | This can only be code for now.
 
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
+<aside class="notice">
+  For now only the scopes: email & content are supported
 </aside>
 
-## Get a Specific Kitten
+## Request access code
 
-```ruby
-require 'kittn'
+### HTTP Request
+`POST http://csbauth2.apps2connect.nl/oauth/v2/token`
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
+### Post parameters
+Parameter | Description
+--------- | -----------
+grant_type | Can only be authorization_code at the moment.
+code | Code that was received from the authorization code request
+redirect_uri | URI to redirect to with the response, this should be set to one of the URI's you provided when applying for a client.
+client_id | String which was sent by us when applying for a client.
+client_secret | String which was sent by us when applying for a client.
 
-```python
-import 'kittn'
 
-api = Kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/3"
-  -H "Authorization: meowmeowmeow"
-```
-
-> The above command returns JSON structured like this:
+> Successful request to this end-point will return JSON structured like this:
 
 ```json
 {
-  "id": 2,
-  "name": "Isis",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
+  "access_token": "CONTENT2CONNECTACCESSTOKEN",
+  "expires_in": 3600,
+  "token_type": "bearer",
+  "scope": "content",
+  "refresh_token": "CONTENT2CONNECTREFRESHTOKEN"
 }
 ```
 
-This endpoint retrieves a specific kitten.
+# Content2Connect
 
-<aside class="warning">If you're not using an administrator API key, note that some kittens will return 403 Forbidden if they are hidden for admins only.</aside>
+## Get all user's content
+
+Request to this URL will return the user's content.
 
 ### HTTP Request
+`GET http://content.connectsb.nl/api/content`
 
-`GET http://example.com/kittens/<ID>`
-
-### URL Parameters
-
+### Query parameters
 Parameter | Description
 --------- | -----------
-ID | The ID of the cat to retrieve
+access_token | Access token received by successfully requesting access code
+
+> Successful request to this end-point will return JSON structured like this:
+
+```json
+{
+  "content_items": [
+    "/uploads/content_uploads/test.jpeg"
+  ]
+}
+```
 
