@@ -40,7 +40,7 @@
         <h1 id='introduction'>Introduction</h1>
 <p>Welcome to ConnectSB&rsquo;s Content2Connect API. This is still a work in progress.</p>
 <h1 id='authentication'>Authentication</h1>
-<p>Content2Connect uses OAuth2 for authenticating and authorizing users. </p>
+<p>Content2Connect uses OAuth2 for authenticating and authorizing users.</p>
 
 <p>Content2Connect excepts for the access token be included in all API requests, this is a GET parameter which looks like this:</p>
 
@@ -86,7 +86,7 @@
 </thead><tbody>
 <tr>
 <td>grant_type</td>
-<td>Can only be authorization_code at the moment.</td>
+<td>Can only be authorization_code</td>
 </tr>
 <tr>
 <td>code</td>
@@ -103,6 +103,44 @@
 <tr>
 <td>client_secret</td>
 <td>String which was sent by us when applying for a client.</td>
+</tr>
+</tbody></table>
+
+<blockquote>
+<p>Successful request to this end-point will return JSON structured like this:</p>
+</blockquote>
+<pre class="highlight json"><span class="p">{</span><span class="w">
+  </span><span class="s2">"access_token"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CONTENT2CONNECTACCESSTOKEN"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"expires_in"</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"token_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"bearer"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"scope"</span><span class="p">:</span><span class="w"> </span><span class="s2">"content"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"refresh_token"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CONTENT2CONNECTREFRESHTOKEN"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre>
+<h2 id='refresh-your-access-code'>Refresh your access code</h2><h3 id='http-request'>HTTP Request</h3>
+<p><code class="prettyprint">POST http://csbauth2.apps2connect.nl/oauth/v2/token</code></p>
+<h3 id='post-parameters'>Post parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>grant_type</td>
+<td>Can only be refresh_token</td>
+</tr>
+<tr>
+<td>client_id</td>
+<td>String which was sent by us when applying for a client.</td>
+</tr>
+<tr>
+<td>client_secret</td>
+<td>String which was sent by us when applying for a client.</td>
+</tr>
+<tr>
+<td>refresh_token</td>
+<td>Refresh token which was received when requesting access code</td>
 </tr>
 </tbody></table>
 
